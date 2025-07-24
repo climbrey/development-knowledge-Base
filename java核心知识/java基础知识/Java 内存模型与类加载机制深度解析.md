@@ -256,7 +256,7 @@ protected Class<?> loadClass(String name, boolean resolve)
 
 
 
-1.  **委托父类加载器加载**：若目标类未被加载，会调用 `parent.loadClass(name, false)` 将加载任务委托给父类加载器。以 `AppClassLoader` 为例，其父类为 `ExtClassLoader`，这种委托机制形成了类加载器的双亲委派模型。从 `ClassLoader` 的 `loadClass` 方法代码可见，通过 `parent` 属性逐级向上委托，直到 `BootstrapClassLoader`：
+2.  **委托父类加载器加载**：若目标类未被加载，会调用 `parent.loadClass(name, false)` 将加载任务委托给父类加载器。以 `AppClassLoader` 为例，其父类为 `ExtClassLoader`，这种委托机制形成了类加载器的双亲委派模型。从 `ClassLoader` 的 `loadClass` 方法代码可见，通过 `parent` 属性逐级向上委托，直到 `BootstrapClassLoader`：
 
 
 
@@ -274,7 +274,7 @@ if (parent != null) {
 
 
 
-1.  **父类加载失败则自身加载**：当父类加载器返回 `null`（即无法加载该类）时，当前类加载器会调用自身的 `findClass` 方法尝试加载。例如 `URLClassLoader` 重写了 `findClass` 方法，会从指定的 URL 路径中查找 `.class` 文件并读取字节码，通过 `defineClass` 方法将字节码转换为 `Class` 对象：
+3.  **父类加载失败则自身加载**：当父类加载器返回 `null`（即无法加载该类）时，当前类加载器会调用自身的 `findClass` 方法尝试加载。例如 `URLClassLoader` 重写了 `findClass` 方法，会从指定的 URL 路径中查找 `.class` 文件并读取字节码，通过 `defineClass` 方法将字节码转换为 `Class` 对象：
 
 
 
@@ -292,7 +292,7 @@ protected Class<?> findClass(String name) throws ClassNotFoundException {
 
 
 
-1.  **链接与初始化（可选）**：如果 `resolve` 参数为 `true`，`loadClass` 方法最后会调用 `resolveClass` 方法对类进行链接操作，包括验证、准备和解析阶段。链接完成后，若类尚未初始化，会触发类的初始化阶段，执行类的静态代码块和静态变量赋值操作。
+4.  **链接与初始化（可选）**：如果 `resolve` 参数为 `true`，`loadClass` 方法最后会调用 `resolveClass` 方法对类进行链接操作，包括验证、准备和解析阶段。链接完成后，若类尚未初始化，会触发类的初始化阶段，执行类的静态代码块和静态变量赋值操作。
 
 **缓存机制的实现**：
 
